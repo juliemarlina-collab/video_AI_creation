@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video AI Creation Board — Step-by-Step Guide</title>
+  <style>
+    :root{
+      --bg:#f4f5fb;
+      --text:#1d2033;
+      --muted:#6b7087;
+      --card:#ffffff;
+      --phase1:#ff6b5f;
+      --phase1b:#ff8b7f;
+      --phase2:#6c63ff;
+      --phase2b:#8c85ff;
+      --phase3:#ffcf48;
+      --phase3b:#ffe488;
+      --phase4:#34d399;
+      --phase4b:#7ee8bf;
+      --shadow:0 18px 50px rgba(28,32,51,.12);
+      --radius:28px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:linear-gradient(180deg,#fcfcff 0%,#f4f5fb 45%,#eef0fa 100%);font-family:Inter,Arial,sans-serif;color:var(--text)}
+    .container{max-width:1320px;margin:auto;padding:24px}
+
+    /* TOPBAR */
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;background:rgba(255,255,255,.8);backdrop-filter:blur(14px);padding:14px 18px;border-radius:22px;box-shadow:var(--shadow);position:sticky;top:16px;z-index:20}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:900}
+    .logo{width:40px;height:40px;border-radius:14px;background:conic-gradient(from 210deg,var(--phase1),var(--phase2),var(--phase3),var(--phase4),var(--phase1));display:grid;place-items:center;color:white;font-weight:900}
+    .nav{display:flex;gap:10px;flex-wrap:wrap}
+    .nav a{padding:10px 14px;border-radius:999px;background:#f2f4ff;color:#3f4566;font-weight:800;text-decoration:none;font-size:14px}
+
+    /* HERO */
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;padding:54px 0 24px}
+    .eyebrow{display:inline-block;padding:10px 14px;border-radius:999px;background:#fff0ee;color:var(--phase1);font-weight:900;font-size:13px;letter-spacing:.4px}
+    h1{font-size:clamp(42px,7vw,82px);line-height:.95;letter-spacing:-2.8px;margin:18px 0 16px}
+    h1 span{color:var(--phase1)}
+    .sub{font-size:19px;color:var(--muted);max-width:750px;line-height:1.6}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+    .btn{padding:14px 18px;border:none;border-radius:18px;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;box-shadow:var(--shadow)}
+    .btn.primary{background:linear-gradient(135deg,var(--phase1),var(--phase1b));color:white}
+    .btn.dark{background:#1f2540;color:white}
+    .btn.light{background:white;color:#1f2540}
+    .heroBoard{position:relative;min-height:620px}
+    .float{position:absolute;background:var(--card);border-radius:32px;box-shadow:var(--shadow);padding:26px;overflow:hidden}
+    .f1{left:0;top:30px;width:46%;height:250px;transform:rotate(-3deg)}
+    .f2{right:6%;top:0;width:42%;height:320px;transform:rotate(2deg);background:linear-gradient(135deg,var(--phase1),var(--phase1b));color:white}
+    .f3{left:8%;bottom:24px;width:52%;height:290px;transform:rotate(2deg)}
+    .f4{right:0;bottom:64px;width:42%;height:260px;transform:rotate(-2deg)}
+    .heroBoard h3{font-size:30px;line-height:1.05;margin:0 0 10px}
+    .heroBoard p{color:#6e738d;font-weight:650}
+    .f2 p{color:#fff}
+    .portrait{position:absolute;right:22px;bottom:0;width:220px;height:260px;border-radius:30px;background:linear-gradient(180deg,#fff,#ffe4dd);display:grid;place-items:center;font-size:96px}
+    .miniGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+    .miniCard{padding:18px;border-radius:18px;color:white;font-weight:900;min-height:92px}
+
+    /* SECTIONS */
+    section{padding:54px 0}
+    .section-head{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:24px}
+    .section-head h2{font-size:clamp(34px,5vw,58px);line-height:1;margin:0;letter-spacing:-2px}
+    .section-head p{max-width:520px;margin:0;color:var(--muted);font-size:17px}
+
+    /* PHASE TABS */
+    .phase-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px}
+    .phase-tab{border:none;text-align:left;padding:24px;border-radius:28px;color:white;cursor:pointer;box-shadow:var(--shadow);transition:.25s transform,.25s opacity,.25s box-shadow;opacity:.85}
+    .phase-tab:hover{transform:translateY(-4px)}
+    .phase-tab.active{transform:translateY(-8px);opacity:1;box-shadow:0 24px 60px rgba(28,32,51,.18)}
+    .phase-tab small{display:block;font-size:12px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;opacity:.9}
+    .phase-tab h3{margin:0;font-size:24px;line-height:1.08}
+    .p1{background:linear-gradient(135deg,var(--phase1),var(--phase1b))}
+    .p2{background:linear-gradient(135deg,var(--phase2),var(--phase2b))}
+    .p3{background:linear-gradient(135deg,var(--phase3),var(--phase3b));color:#292729}
+    .p4{background:linear-gradient(135deg,var(--phase4),var(--phase4b));color:#0f3a2c}
+    .phase-panel{display:none;background:white;border-radius:34px;padding:28px;box-shadow:var(--shadow)}
+    .phase-panel.active{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start}
+    .phase-panel h3{font-size:34px;line-height:1.05;margin:0 0 14px}
+    .phase-panel p,.phase-panel li{color:var(--muted);font-size:16px;line-height:1.6}
+    .phase-panel ul{padding-left:20px}
+    .output{display:inline-block;margin-top:10px;padding:12px 16px;border-radius:999px;background:#f3f5ff;font-weight:900}
+    .phase-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .phase-mini{border-radius:24px;padding:18px;color:white;min-height:140px}
+    .phase-mini h4{margin:0 0 10px;font-size:18px}
+    .phase-mini p{margin:0;color:inherit;opacity:.95}
+
+    /* TAGS */
+    .tag{display:inline-block;padding:7px 11px;border-radius:999px;background:#f4f5ff;color:#464d72;font-weight:900;font-size:12px;margin:5px 4px 0 0}
+
+    /* STORYBOARD */
+    .story-toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+    .story-filter{padding:10px 14px;border:none;border-radius:999px;background:#fff;box-shadow:var(--shadow);font-weight:900;cursor:pointer}
+    .story-filter.active{background:#1f2540;color:white}
+    .story-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .scene{background:white;border-radius:26px;padding:18px;box-shadow:var(--shadow);cursor:pointer;transition:.2s transform,.2s box-shadow}
+    .scene:hover{transform:translateY(-4px)}
+    .scene .time{font-size:13px;font-weight:900;color:#5d61ff}
+    .scene .badge{width:40px;height:40px;border-radius:14px;background:#1f2540;color:white;display:grid;place-items:center;font-weight:900;margin-bottom:12px}
+    .scene h4{margin:6px 0 8px;font-size:18px}
+    .scene p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+
+    /* SAMPLE / PROMPT */
+    .sample-panel{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+    .sample-box{background:white;border-radius:30px;padding:24px;box-shadow:var(--shadow)}
+    .sample-box h3{margin:0 0 14px;font-size:28px}
+    .sample-box p{margin:8px 0;color:var(--muted);line-height:1.6}
+    .prompt-box{position:relative}
+    textarea{width:100%;min-height:280px;border:none;border-radius:26px;background:#10131f;color:#fff;padding:22px;font-family:Consolas,monospace;line-height:1.55;font-size:14px}
+    .copy{position:absolute;top:14px;right:14px;padding:10px 14px;border:none;border-radius:12px;background:var(--phase3);font-weight:900;cursor:pointer}
+
+    /* CHECKLIST */
+    .sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .check-card,.track-card{background:white;border-radius:30px;padding:24px;box-shadow:var(--shadow)}
+    .check{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #eef0f7;color:#49506f;font-weight:750}
+    .check input{width:20px;height:20px;accent-color:var(--phase2)}
+    .track-card input,.track-card textarea{width:100%;padding:14px 16px;border:none;border-radius:16px;background:#f4f5fb;font-family:inherit;font-size:15px;margin-bottom:12px}
+    .track-card textarea{min-height:100px}
+    .save{padding:13px 16px;border:none;border-radius:16px;background:linear-gradient(135deg,var(--phase2),var(--phase2b));color:white;font-weight:900;cursor:pointer}
+    .saved{margin-top:10px;font-weight:900;color:var(--phase2)}
+    .footer{padding:28px 0 50px;text-align:center;color:#757b94;font-weight:700}
+
+    /* TOOL COMPARISON */
+    .compare-wrap{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+    .compare-tabs{display:grid;gap:14px}
+    .tool-tab{border:none;text-align:left;border-radius:26px;padding:20px;background:white;box-shadow:var(--shadow);cursor:pointer;transition:.22s transform,.22s box-shadow,.22s background}
+    .tool-tab:hover{transform:translateY(-4px)}
+    .tool-tab.active{background:linear-gradient(135deg,#1f2540,#303a68);color:#fff;transform:translateY(-3px)}
+    .tool-tab .tool-name{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:950;font-size:20px;margin-bottom:6px}
+    .tool-tab p{margin:0;color:#6b7087;font-weight:650;line-height:1.45}
+    .tool-tab.active p{color:#e9ecff}
+    .compare-panel{background:white;border-radius:34px;padding:26px;box-shadow:var(--shadow);min-height:460px}
+    .compare-panel h3{font-size:36px;line-height:1.05;margin:0 0 10px}
+    .tool-badges{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 20px}
+    .tool-badge{display:inline-flex;border-radius:999px;padding:8px 12px;background:#f4f5ff;color:#434a70;font-weight:900;font-size:12px}
+    .tool-badge.free{background:#e8fff4;color:#0d6e4a}
+    .compare-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+    .compare-card{border-radius:22px;padding:16px;background:#f6f7ff;border:1px solid #eef0fa}
+    .compare-card.adv{background:#edfff6;border-color:#c2f0db}
+    .compare-card.dis{background:#fff4f4;border-color:#ffd4d4}
+    .compare-card h4{margin:0 0 8px;font-size:16px}
+    .compare-card p,.compare-card li{margin:0;color:#626883;line-height:1.55;font-size:14px}
+    .compare-card ul{margin:0;padding-left:18px}
+    .comparison-table{width:100%;border-collapse:separate;border-spacing:0 10px;margin-top:20px}
+    .comparison-table th{text-align:left;font-size:13px;color:#626883;padding:0 12px}
+    .comparison-table td{background:#fff;border-top:1px solid #eef0fa;border-bottom:1px solid #eef0fa;padding:14px 12px;color:#4d536e;font-weight:650}
+    .comparison-table td:first-child{border-left:1px solid #eef0fa;border-radius:16px 0 0 16px;font-weight:950;color:#1f2540}
+    .comparison-table td:last-child{border-right:1px solid #eef0fa;border-radius:0 16px 16px 0}
+    .rating{letter-spacing:2px;color:#ffb800;font-weight:900}
+    .free-badge{display:inline-block;padding:4px 10px;border-radius:999px;background:#e8fff4;color:#0d6e4a;font-weight:900;font-size:12px}
+
+    /* DECISION GUIDE */
+    .decision-banner{background:linear-gradient(135deg,var(--phase3),var(--phase3b));border-radius:30px;padding:28px;margin-top:24px;color:#2b2a18;box-shadow:var(--shadow)}
+    .decision-banner h3{margin:0 0 18px;font-size:28px}
+    .decision-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .decision-card{background:rgba(255,255,255,.65);border-radius:20px;padding:16px}
+    .decision-card .phase-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;color:#665200}
+    .decision-card h4{margin:0 0 8px;font-size:15px;color:#1d2033}
+    .decision-card p{margin:0;font-size:13px;color:#4b461f;line-height:1.5;font-weight:700}
+    .decision-card .tool-pill{display:inline-block;margin-top:8px;padding:5px 10px;border-radius:999px;background:#1f2540;color:white;font-size:12px;font-weight:900}
+
+    /* MODAL */
+    .modal{position:fixed;inset:0;background:rgba(14,18,35,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
+    .modal.active{display:flex}
+    .modal-box{background:white;border-radius:30px;max-width:880px;width:100%;padding:28px;box-shadow:0 28px 80px rgba(0,0,0,.26);max-height:90vh;overflow:auto;position:relative}
+    .close{position:absolute;right:18px;top:18px;border:none;background:#f4f5fb;width:40px;height:40px;border-radius:12px;font-size:20px;cursor:pointer}
+    .modal-box h3{margin-top:0;font-size:30px}
+    .modal-box p{color:var(--muted);line-height:1.7}
+    .pill{display:inline-block;padding:8px 12px;border-radius:999px;background:#eef0ff;color:#4b52c5;font-weight:900;font-size:12px;margin-bottom:12px}
+
+    /* AUDIO SECTION */
+    .audio-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
+
+    /* RESPONSIVE */
+    @media (max-width:1080px){
+      .hero,.phase-panel.active,.sample-panel,.sub-grid,.audio-grid{grid-template-columns:1fr}
+      .heroBoard{min-height:auto;display:grid;gap:18px}
+      .float{position:relative !important;inset:auto !important;width:auto !important;height:auto !important;transform:none !important}
+      .portrait{position:relative;width:100%;height:180px}
+      .story-grid,.phase-tabs{grid-template-columns:repeat(2,1fr)}
+      .compare-wrap{grid-template-columns:1fr}
+      .compare-grid{grid-template-columns:1fr}
+      .decision-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:700px){
+      .container{padding:14px}
+      .nav{display:none}
+      .story-grid,.phase-tabs,.phase-card-grid{grid-template-columns:1fr}
+      .topbar{padding:12px 14px}
+      h1{letter-spacing:-1.6px}
+      .section-head{display:block}
+      .section-head p{margin-top:12px}
+      .decision-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ══════════════════════════════════════════
+       TOPBAR — numbered nav matches section order
+  ══════════════════════════════════════════ -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">AI</div>
+      <div>Video AI Creation Board</div>
+    </div>
+    <div class="nav">
+      <a href="#phases">① 4 Phases</a>
+      <a href="#prompt">② Master Prompt</a>
+      <a href="#storyboard">③ Storyboard</a>
+      <a href="#toolcompare">④ Free Tools</a>
+      <a href="#sample">⑤ Sample Scene</a>
+      <a href="#phase4-audio">⑥ Audio Guide</a>
+      <a href="#submit">⑦ Submit</a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════ -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Beginner-Friendly · Step-by-Step · All Free Tools</div>
+      <h1>Create <span>Video AI</span><br/>Step by Step</h1>
+      <div class="sub">Follow the <b>4 phases</b> in order — Master Prompting → Image Creation → Video Motion → Audio Finalization. Each section below matches one phase. Use the numbered nav above to move through the board.</div>
+      <div class="cta">
+        <a class="btn primary" href="#phases">① Start: 4 Phases</a>
+        <a class="btn dark" href="#prompt">② Master Prompt</a>
+        <a class="btn light" href="#toolcompare">④ Free Tools Guide</a>
+        <a class="btn light" href="#submit">⑦ Submit Checklist</a>
+      </div>
+    </div>
+    <div class="heroBoard">
+      <div class="float f1">
+        <h3>4 phases, 7 clear steps</h3>
+        <p>Each numbered section takes you through one stage of production — from planning to final export.</p>
+        <div class="tag">P&amp;P Video</div><div class="tag">AI Workflow</div><div class="tag">Free Tools</div>
+      </div>
+      <div class="float f2">
+        <h3>Click each phase to reveal the guide</h3>
+        <p>See what to do, which tools to use and what output to produce before moving forward.</p>
+        <div class="portrait">👩‍🏫</div>
+      </div>
+      <div class="float f3">
+        <h3>4 Phases — in order</h3>
+        <div class="miniGrid">
+          <div class="miniCard" style="background:linear-gradient(135deg,var(--phase1),var(--phase1b))">01<br/>Master Prompting</div>
+          <div class="miniCard" style="background:linear-gradient(135deg,var(--phase2),var(--phase2b))">02<br/>Image Creation</div>
+          <div class="miniCard" style="background:linear-gradient(135deg,var(--phase3),var(--phase3b));color:#222">03<br/>Video Motion</div>
+          <div class="miniCard" style="background:linear-gradient(135deg,var(--phase4),var(--phase4b));color:#0c3b2a">04<br/>Audio Finalization</div>
+        </div>
+      </div>
+      <div class="float f4">
+        <h3>All tools are FREE</h3>
+        <p>Google Vids · Canva · CapCut — no credit card, no install required. Just a Google or email account.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       SECTION ① — 4 MAIN PHASES
+  ══════════════════════════════════════════ -->
+  <section id="phases">
+    <div class="section-head">
+      <h2>① 4 Main Phases</h2>
+      <p>Click each coloured tab to explore the full guide for that phase — what to do, what output to produce and what comes next. Always complete each phase in order before moving to the next.</p>
+    </div>
+
+    <div class="phase-tabs">
+      <button class="phase-tab p1 active" data-tab="tab1">
+        <small>Phase 01 · Start Here 🔴</small>
+        <h3>Master Prompting</h3>
+      </button>
+      <button class="phase-tab p2" data-tab="tab2">
+        <small>Phase 02 · After Phase 01 🟣</small>
+        <h3>Image Creation</h3>
+      </button>
+      <button class="phase-tab p3" data-tab="tab3">
+        <small>Phase 03 · After Phase 02 🟡</small>
+        <h3>Video Motion</h3>
+      </button>
+      <button class="phase-tab p4" data-tab="tab4">
+        <small>Phase 04 · Final Step 🟢</small>
+        <h3>Audio Finalization</h3>
+      </button>
+    </div>
+
+    <!-- ── PHASE 01: MASTER PROMPTING ── -->
+    <div id="tab1" class="phase-panel active">
+      <div>
+        <h3>Phase 01 — Master Prompting</h3>
+        <p>This is where everything begins. <b>Do not generate any image or video until this phase is complete.</b> You write one Master Prompt that captures the full story, characters, visual style and scene plan. This prompt guides all image and video generation in Phases 02, 03 and 04.</p>
+        <ul>
+          <li><b>Step 1:</b> Decide your video title, topic and learning objective</li>
+          <li><b>Step 2:</b> Identify your target audience and moral value of the story</li>
+          <li><b>Step 3:</b> Create character profiles — name, appearance, role and personality</li>
+          <li><b>Step 4:</b> Choose visual style, mood and colour palette (e.g. cinematic, warm, folk)</li>
+          <li><b>Step 5:</b> Plan 20 scenes with title and 9-second time slot each (20 × 9s = 3 min)</li>
+          <li><b>Step 6:</b> Write and save your Master Prompt — use the template in Section ② below</li>
+          <li><b>Step 7:</b> Paste the prompt into <b>Gemini or ChatGPT</b> to generate a full scene-by-scene production guide</li>
+        </ul>
+        <div class="output">✅ Output: Master Prompt + 20-Scene Storyboard Plan</div>
+        <p style="margin-top:14px;font-size:14px;color:var(--phase1);font-weight:900">➡ Scroll to Section ② to copy the Master Prompt template, then paste it into Gemini or ChatGPT.</p>
+      </div>
+      <div class="phase-card-grid">
+        <div class="phase-mini" style="background:linear-gradient(135deg,var(--phase1),var(--phase1b))">
+          <h4>Teaching Direction</h4>
+          <p>Topic, objective, moral value and target audience. Decide this before anything else — it shapes the whole video.</p>
+        </div>
+        <div class="phase-mini" style="background:#1f2540">
+          <h4>Story Design</h4>
+          <p>Beginning → conflict → turning point → resolution → moral lesson. Every scene must serve the story arc.</p>
+        </div>
+        <div class="phase-mini" style="background:#ffffff;color:#1d2033;border:1px solid #eef0fa">
+          <h4>Character Profiles</h4>
+          <p style="color:#6b7087">Bawang Putih, Bawang Merah, Ibu Tiri, Nenek Tua, Jejaka Moden — define each character's look once and keep it consistent in every scene.</p>
+        </div>
+        <div class="phase-mini" style="background:#fff4f2;color:#8c3a35">
+          <h4>Scene Plan</h4>
+          <p style="color:#8c3a35">20 scenes × 9 seconds = 3 minutes exactly. Write scene title + summary for every scene before generating anything.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PHASE 02: IMAGE CREATION ── -->
+    <div id="tab2" class="phase-panel">
+      <div>
+        <h3>Phase 02 — Image Creation</h3>
+        <p>Using the scene prompts from your Phase 01 storyboard, generate <b>one still image per scene</b> using a free AI image tool. These 20 images are the visual foundation of your video — <b>you cannot animate what you have not first generated as a still image.</b></p>
+        <ul>
+          <li><b>Step 1:</b> Open <b>Gemini</b> (gemini.google.com) or <b>Bing Image Creator</b> (free)</li>
+          <li><b>Step 2:</b> Use each scene's image prompt from your Phase 01 output</li>
+          <li><b>Step 3:</b> Generate images in <b>16:9 landscape format</b> for video compatibility</li>
+          <li><b>Step 4:</b> Keep character face, outfit and setting <b>consistent</b> across all scenes</li>
+          <li><b>Step 5:</b> If an image looks wrong, adjust the prompt and regenerate — do not skip</li>
+          <li><b>Step 6:</b> Save all 20 images in one folder before moving to Phase 03</li>
+        </ul>
+        <div class="output">✅ Output: 20 Scene Images (16:9, one per scene)</div>
+        <p style="margin-top:14px;font-size:14px;color:var(--phase2);font-weight:900">➡ Once all 20 images are saved, check them in Section ③ Storyboard, then proceed to Section ④ to choose your Phase 03 video tool.</p>
+      </div>
+      <div class="phase-card-grid">
+        <div class="phase-mini" style="background:linear-gradient(135deg,var(--phase2),var(--phase2b))">
+          <h4>Free Image Tools</h4>
+          <p>Gemini (gemini.google.com) · Bing Image Creator (free) · Adobe Firefly (free tier). Use the same tool for all 20 scenes.</p>
+        </div>
+        <div class="phase-mini" style="background:#1f2540">
+          <h4>Consistency Rule</h4>
+          <p>Check outfit, background, expression and visual style are consistent. Compare Scene 1 and Scene 20 side by side before continuing.</p>
+        </div>
+        <div class="phase-mini" style="background:#f4f1ff;color:#4639be">
+          <h4>Scene Examples</h4>
+          <p style="color:#4639be">Kampung sunrise · River washing · Magical box glow · City café interior · Cherry blossom park.</p>
+        </div>
+        <div class="phase-mini" style="background:#eef7ff;color:#2f5e91">
+          <h4>Beginner Tip</h4>
+          <p style="color:#2f5e91">Generate scenes in order (1 → 20). This makes it easier to keep continuity. Never jump to scene 10 before finishing scenes 1–9.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PHASE 03: VIDEO MOTION ── -->
+    <div id="tab3" class="phase-panel">
+      <div>
+        <h3>Phase 03 — Video Motion</h3>
+        <p>Upload your 20 scene images into a <b>free video tool</b> and bring them to life with motion, camera moves and transitions. This phase produces a silent draft video. <b>Do not add audio yet</b> — that is Phase 04.</p>
+        <ul>
+          <li><b>Step 1:</b> Open <b>Google Vids</b> or <b>Canva</b> (both free — see Section ④)</li>
+          <li><b>Step 2:</b> Upload and arrange all 20 scene images in the correct sequence</li>
+          <li><b>Step 3:</b> Set each clip to 9 seconds duration</li>
+          <li><b>Step 4:</b> Add camera movement — push-in, zoom, slow pan or static hold</li>
+          <li><b>Step 5:</b> Add transitions between scenes — fade, dissolve or cut</li>
+          <li><b>Step 6:</b> Watch the full silent draft (3 minutes) and check the story flows clearly</li>
+          <li><b>Step 7:</b> Export as MP4 draft — this goes into Phase 04 for audio</li>
+        </ul>
+        <div class="output">✅ Output: Silent Draft Video (3 minutes, all 20 scenes)</div>
+        <p style="margin-top:14px;font-size:14px;color:#b38a00;font-weight:900">➡ See Section ④ below for a full comparison of the 3 free tools. <b>Beginners: start with Google Vids.</b></p>
+      </div>
+      <div class="phase-card-grid">
+        <div class="phase-mini" style="background:linear-gradient(135deg,var(--phase3),var(--phase3b));color:#2f2d18">
+          <h4>Camera Language</h4>
+          <p style="color:#2f2d18">Slow push-in for emotional scenes · Wide shot for establishing · Close-up for reactions · Static hold for narration-heavy scenes.</p>
+        </div>
+        <div class="phase-mini" style="background:#1f2540">
+          <h4>Transitions</h4>
+          <p>Fade in/out · Cross dissolve · Cut. Choose 1–2 styles only and keep them consistent throughout the video.</p>
+        </div>
+        <div class="phase-mini" style="background:#fff8db;color:#665200">
+          <h4>Story Flow Check</h4>
+          <p style="color:#665200">Calm village → sadness → kindness → magic → new city → romance → conflict → happy ending. The emotional arc must be clear without audio.</p>
+        </div>
+        <div class="phase-mini" style="background:#fff;color:#1d2033;border:1px solid #eef0fa">
+          <h4>Recommended Tool</h4>
+          <p style="color:#6b7087">Start with Google Vids for assembly. Use CapCut for effects and transitions. Use Canva for title cards and scene labels.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PHASE 04: AUDIO FINALIZATION ── -->
+    <div id="tab4" class="phase-panel">
+      <div>
+        <h3>Phase 04 — Audio Finalization</h3>
+        <p>Take your silent draft video from Phase 03 and add <b>narration, background music and sound effects</b>. This phase makes your video classroom-ready. Do not rush — audio quality decides whether the video feels professional or unfinished.</p>
+        <ul>
+          <li><b>Step 1:</b> Write a short narration line for each of the 20 scenes (max 2 sentences each)</li>
+          <li><b>Step 2:</b> Record your voice-over, or use <b>CapCut's AI Voice</b> feature (free)</li>
+          <li><b>Step 3:</b> Import the draft video into <b>CapCut</b> and add the voice-over track</li>
+          <li><b>Step 4:</b> Add background music from CapCut's free music library (match the scene mood)</li>
+          <li><b>Step 5:</b> Add optional sound effects — river, magic chimes, café ambience</li>
+          <li><b>Step 6:</b> Balance audio — <b>voice-over must always be louder than background music</b></li>
+          <li><b>Step 7:</b> Add subtitles using CapCut's Auto Caption feature, then export final MP4</li>
+        </ul>
+        <div class="output">✅ Output: Final Complete Video with Voice-over, Music &amp; Subtitles</div>
+        <p style="margin-top:14px;font-size:14px;color:#0d6e4a;font-weight:900">➡ See Section ⑥ for the full Audio Guide — sample voice-over scripts and music mood directions for all 20 scenes.</p>
+      </div>
+      <div class="phase-card-grid">
+        <div class="phase-mini" style="background:linear-gradient(135deg,var(--phase4),var(--phase4b));color:#0f3a2c">
+          <h4>Voice-over</h4>
+          <p style="color:#0f3a2c">Short, clear narration per scene. Max 2 sentences. Record in a quiet room. CapCut's AI Voice is a free alternative to recording.</p>
+        </div>
+        <div class="phase-mini" style="background:#1f2540">
+          <h4>Music Moods</h4>
+          <p>Village calm → magic sparkle → café romance → dramatic conflict → hopeful resolution. Change music at each major emotional shift.</p>
+        </div>
+        <div class="phase-mini" style="background:#ecfff7;color:#13714a">
+          <h4>Audio Balance Rule</h4>
+          <p style="color:#13714a">Voice-over volume: 80–100%. Background music: 20–30%. Sound effects: 40–50%. This ratio keeps narration clear throughout.</p>
+        </div>
+        <div class="phase-mini" style="background:#fff;color:#1d2033;border:1px solid #eef0fa">
+          <h4>Final Export Check</h4>
+          <p style="color:#6b7087">Export as MP4 · Add subtitles · Add title card · Test playback on a phone before submitting · Upload to Google Drive and share the link.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       SECTION ② — MASTER PROMPT
+  ══════════════════════════════════════════ -->
+  <section id="prompt">
+    <div class="section-head">
+      <h2>② Master Prompt</h2>
+      <p>Your Phase 01 output. Copy this prompt, personalise it with your own story and characters, then paste it into <b>Gemini</b> or <b>ChatGPT</b> to generate a complete 20-scene production guide.</p>
+    </div>
+    <div class="sample-panel">
+      <div class="sample-box">
+        <h3>How to Use This Prompt</h3>
+        <p><b>1. Read the full prompt</b> in the box on the right. Understand each section before copying.</p>
+        <p><b>2. Personalise the story section.</b> Replace the Bawang Putih &amp; Bawang Merah story with your own characters, plot and moral value if your project differs.</p>
+        <p><b>3. Adjust the format</b> if needed — change duration, number of scenes or language to match your assignment.</p>
+        <p><b>4. Click "Copy"</b> on the prompt box, then open <b>gemini.google.com</b> (free) or <b>chatgpt.com</b> (free tier) and paste the prompt.</p>
+        <p><b>5. Save the AI output.</b> The response will include — for every scene — an image prompt, video prompt, camera movement, voice-over line and music suggestion. This is your <b>production bible</b> for Phases 02, 03 and 04.</p>
+        <div style="margin-top:18px;padding:16px;background:#fff4f2;border-radius:18px;border-left:4px solid var(--phase1)">
+          <p style="margin:0;color:#8c3a35;font-weight:900;font-size:14px">⚠ Important: Do not skip this step. Without a Master Prompt output, you will not have the image prompts needed for Phase 02 or the voice-over lines needed for Phase 04.</p>
+        </div>
+        <div style="margin-top:12px;padding:16px;background:#eef7ff;border-radius:18px;border-left:4px solid var(--phase2)">
+          <p style="margin:0;color:#2f5e91;font-weight:900;font-size:14px">💡 Where to paste: <a href="https://gemini.google.com" target="_blank" style="color:var(--phase2)">gemini.google.com</a> (free, no sign-in needed) · <a href="https://chatgpt.com" target="_blank" style="color:var(--phase2)">chatgpt.com</a> (free tier)</p>
+        </div>
+      </div>
+      <div class="sample-box prompt-box">
+        <button class="copy" onclick="copyPrompt()">📋 Copy</button>
+        <h3>Master Prompt Template</h3>
+        <textarea id="masterPrompt">Create a 3-minute educational P&P video titled "Bawang Putih Bawang Merah: Versi Tradisional ke Moden Ala Drama Korea".
+
+Format: 16:9 landscape.
+Duration: 3 minutes.
+Structure: 20 scenes, approximately 9 seconds each.
+Language: Bahasa Melayu.
+Audience: lecturers and classroom learners.
+
+Style: cinematic, emotional, Korean-drama-inspired, Malay folklore, soft lighting, elegant composition, expressive facial expressions, dreamy atmosphere, realistic characters, high detail, soft volumetric lighting, shallow depth of field, slow motion, camera push-in, tracking shots and emotional storytelling.
+
+Story: Bawang Putih suffers under her cruel stepmother and jealous stepsister. At the river, she helps a kind elderly woman and receives a magical glowing box. The box transports her into a modern Korean-drama-style city. She works in a cozy café, meets a kind young man, faces jealousy from Bawang Merah, and finally finds happiness through kindness.
+
+For every scene, provide:
+1. Scene title and time (e.g. Scene 1 · 0:00–0:09)
+2. Visual description (what the image looks like)
+3. Image generation prompt (for Gemini / Bing Image Creator)
+4. Video motion prompt (camera angle, movement, transition)
+5. Voice-over line (1–2 sentences in Bahasa Melayu)
+6. Music mood and suggested sound effects
+
+End with: "Pengajaran: Keikhlasan, kesabaran dan kebaikan hati akan membawa kebahagiaan."</textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       SECTION ③ — STORYBOARD CARDS
+  ══════════════════════════════════════════ -->
+  <section id="storyboard">
+    <div class="section-head">
+      <h2>③ Storyboard Cards</h2>
+      <p>Phase 02 reference — use this while generating your scene images. Click any card for the full scene detail, image prompt tip and production notes. Generate images in scene order, 1 to 20.</p>
+    </div>
+    <div class="story-toolbar">
+      <button class="story-filter active" data-range="all">All 20 Scenes</button>
+      <button class="story-filter" data-range="traditional">Traditional · Scenes 1–10</button>
+      <button class="story-filter" data-range="modern">Modern City · Scenes 11–16</button>
+      <button class="story-filter" data-range="conflict">Conflict &amp; Ending · Scenes 17–20</button>
+    </div>
+    <div class="story-grid" id="storyGrid"></div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       SECTION ④ — FREE TOOLS COMPARISON (Phase 03)
+  ══════════════════════════════════════════ -->
+  <section id="toolcompare">
+    <div class="section-head">
+      <h2>④ Phase 03 Free Tools</h2>
+      <p>Three free, beginner-friendly tools for Video Motion. Click each tool to see its full strengths and limitations. <b>All three are free and work together</b> — use them in combination for the best result.</p>
+    </div>
+
+    <div class="compare-wrap">
+      <div class="compare-tabs">
+
+        <button class="tool-tab active" data-tool="googlevids">
+          <div class="tool-name">Google Vids <span>🎬</span></div>
+          <p>Free · Best for video assembly, narration and scene arrangement. <b>Start here.</b></p>
+        </button>
+
+        <button class="tool-tab" data-tool="canva">
+          <div class="tool-name">Canva <span>🖼️</span></div>
+          <p>Free tier · Best for design, title cards, short AI video clips and final visual packaging.</p>
+        </button>
+
+        <button class="tool-tab" data-tool="capcut">
+          <div class="tool-name">CapCut <span>✂️</span></div>
+          <p>Fully free · Best for editing, transitions, AI voice-over, auto-captions and export.</p>
+        </button>
+
+      </div>
+
+      <div class="compare-panel">
+        <div id="toolDetail"></div>
+
+        <table class="comparison-table" aria-label="3 free tools quick comparison">
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Cost</th>
+              <th>Best Phase</th>
+              <th>Beginner Ease</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Google Vids ⭐</td>
+              <td><span class="free-badge">Free</span></td>
+              <td>Phase 03</td>
+              <td><span class="rating">★★★★★</span></td>
+              <td>Scene assembly + narration</td>
+            </tr>
+            <tr>
+              <td>Canva</td>
+              <td><span class="free-badge">Free tier</span></td>
+              <td>Phase 01 + 03 + 04</td>
+              <td><span class="rating">★★★★★</span></td>
+              <td>Titles, design &amp; short clips</td>
+            </tr>
+            <tr>
+              <td>CapCut</td>
+              <td><span class="free-badge">100% Free</span></td>
+              <td>Phase 03 + 04</td>
+              <td><span class="rating">★★★★</span></td>
+              <td>Editing, effects &amp; audio sync</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DECISION GUIDE -->
+    <div class="decision-banner">
+      <h3>🗺 Which Free Tool Should I Use — and When?</h3>
+      <div class="decision-grid">
+        <div class="decision-card">
+          <div class="phase-label">Phase 01 · Master Prompting</div>
+          <h4>Write your prompt here</h4>
+          <p>Paste your Master Prompt to generate image prompts, video prompts and voice-over lines for all 20 scenes.</p>
+          <span class="tool-pill">Gemini (free)</span>
+          <span class="tool-pill">ChatGPT (free)</span>
+        </div>
+        <div class="decision-card">
+          <div class="phase-label">Phase 02 · Image Creation</div>
+          <h4>Generate your 20 scene images</h4>
+          <p>Use each scene's image prompt from your Phase 01 output to generate one 16:9 image per scene.</p>
+          <span class="tool-pill">Gemini</span>
+          <span class="tool-pill">Bing Image Creator</span>
+        </div>
+        <div class="decision-card">
+          <div class="phase-label">Phase 03 · Video Motion</div>
+          <h4>Animate &amp; assemble your video</h4>
+          <p>Arrange images in Google Vids. Add effects in CapCut. Use Canva for title cards and labels.</p>
+          <span class="tool-pill">Google Vids ⭐</span>
+          <span class="tool-pill">Canva</span>
+          <span class="tool-pill">CapCut</span>
+        </div>
+        <div class="decision-card">
+          <div class="phase-label">Phase 04 · Audio Finalization</div>
+          <h4>Add voice-over, music &amp; captions</h4>
+          <p>Import draft into CapCut. Add AI voice or recorded narration, free music and auto-generated subtitles.</p>
+          <span class="tool-pill">CapCut ⭐</span>
+          <span class="tool-pill">Google Vids</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       SECTION ⑤ — SAMPLE SCENE
+  ══════════════════════════════════════════ -->
+  <section id="sample">
+    <div class="section-head">
+      <h2>⑤ Sample Scene Guide</h2>
+      <p>This shows what one fully written scene looks like across all 4 phases. Use this format as a template when writing your own 20 scenes.</p>
+    </div>
+    <div class="sample-panel" style="grid-template-columns:1fr;">
+      <div class="sample-box">
+        <span class="pill">Scene 1 of 20 · 0:00–0:09 · Phase: Traditional Opening</span>
+        <h3>Scene 01 — Pembukaan Kampung</h3>
+        <p><b>📷 Phase 02 — Image Prompt:</b> Traditional Malay kampung at golden sunrise. Wooden stilted house surrounded by lush green trees. A gentle girl in baju kurung (Bawang Putih) sweeps the yard. Two other figures (Bawang Merah, Ibu Tiri) visible through the window. Cinematic 16:9 composition, warm golden light, shallow depth of field, high detail, realistic Malay folk style.</p>
+        <p><b>🎬 Phase 03 — Video Motion Prompt:</b> Slow wide establishing shot pushing gently forward toward the kampung. Camera drifts from treetop level down to Bawang Putih sweeping. Transition: slow fade in from black. Duration: 9 seconds.</p>
+        <p><b>🔀 Transition to Scene 02:</b> Cross dissolve into the chore montage.</p>
+        <p><b>🎙 Phase 04 — Voice-over:</b> "Pada zaman dahulu, tinggal seorang gadis baik hati bernama Bawang Putih bersama ibu tiri dan saudara tirinya, Bawang Merah."</p>
+        <p><b>🎵 Phase 04 — Music:</b> Soft Malay seruling (flute), gentle piano and light strings. Warm, nostalgic, calm opening mood.</p>
+        <div style="margin-top:16px;padding:16px;background:#f4f5fb;border-radius:18px;color:#6b7087;font-size:14px;line-height:1.6">
+          <b>📌 Lecturer Note:</b> This is the structure for every one of your 20 scenes — Image Prompt → Video Motion Prompt → Transition → Voice-over → Music. Write all 20 scenes in this format after running your Master Prompt in Gemini. That output becomes your production guide for Phases 02, 03 and 04.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       SECTION ⑥ — PHASE 04 AUDIO GUIDE
+  ══════════════════════════════════════════ -->
+  <section id="phase4-audio">
+    <div class="section-head">
+      <h2>⑥ Phase 04: Audio Finalization Guide</h2>
+      <p>The final production phase. Your silent draft from Phase 03 is brought to life with narration, music and sound. Use CapCut (free) as your main audio tool — it handles voice-over, music, captions and export in one place.</p>
+    </div>
+
+    <div class="phase-panel active" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <div>
+        <h3>Audio Workflow — Step by Step</h3>
+        <p>Follow these steps in order after your Phase 03 silent draft is ready. Do not add audio directly in Google Vids if your draft is already there — export it first, then bring it into CapCut for audio work.</p>
+        <ul>
+          <li><b>Step 1 — Write narration:</b> Write one short voice-over line per scene (max 2 sentences, under 9 seconds each). Use your Phase 01 Master Prompt output as the source.</li>
+          <li><b>Step 2 — Record or generate voice:</b> Record your own voice in a quiet room, or use <b>CapCut → AI Voice</b> to generate a narrator voice automatically from your script.</li>
+          <li><b>Step 3 — Add background music:</b> Use CapCut's free music library. Match music mood to each scene's emotion. Change the music track when the emotion shifts significantly.</li>
+          <li><b>Step 4 — Add sound effects:</b> Optional but effective — river sounds, magic chimes, café noise or city ambience. Keep them subtle so they don't compete with narration.</li>
+          <li><b>Step 5 — Balance audio levels:</b> Voice-over = loudest. Background music = low. Sound effects = medium. Listen through headphones to check the balance.</li>
+          <li><b>Step 6 — Add captions:</b> Use <b>CapCut → Auto Caption</b> to generate subtitles automatically. Edit any errors before exporting.</li>
+          <li><b>Step 7 — Export final video:</b> Export as MP4 (1080p). Test playback on a phone. Upload to Google Drive and copy the shareable link for submission.</li>
+        </ul>
+        <div class="output">✅ Output: Final Complete Video — Voice-over, Music, Captions &amp; Export Done</div>
+      </div>
+      <div class="phase-card-grid">
+        <div class="phase-mini" style="background:linear-gradient(135deg,var(--phase4),var(--phase4b));color:#0f3a2c">
+          <h4>Voice-over Rule</h4>
+          <p style="color:#0f3a2c">Max 2 sentences per 9-second scene. Record in a quiet space. Speak clearly and at a steady pace. Start speaking 0.5 seconds after the scene begins.</p>
+        </div>
+        <div class="phase-mini" style="background:#1f2540">
+          <h4>Music Mood Map</h4>
+          <p>Scenes 1–5: calm village · Scenes 6–10: tense + magical · Scenes 11–16: hopeful + romantic · Scenes 17–18: dramatic · Scenes 19–20: uplifting &amp; warm.</p>
+        </div>
+        <div class="phase-mini" style="background:#ecfff7;color:#13714a">
+          <h4>Audio Balance</h4>
+          <p style="color:#13714a">Voice-over: 80–100% · Music: 20–30% · SFX: 40–50%. If the music drowns out the narrator, lower the music track — never lower the voice-over.</p>
+        </div>
+        <div class="phase-mini" style="background:#fff;color:#1d2033;border:1px solid #eef0fa">
+          <h4>CapCut Features to Use</h4>
+          <p style="color:#6b7087">AI Voice · Auto Caption · Music Library · Sound Effects Library · Text-to-Speech · 1080p MP4 Export. All free.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="audio-grid">
+      <div class="sample-box">
+        <h3>Music Mood Guide by Scene Group</h3>
+        <p><b>🌅 Scenes 1–5 — Village Opening:</b> Soft Malay flute, light piano and gentle strings. Calm, warm, nostalgic. Keep volume very low — let the visuals breathe.</p>
+        <p><b>😢 Scenes 3–4 — Sadness &amp; Hard Work:</b> Slow, melancholic piano with soft strings. Slightly slower tempo. Conveys patience and hardship without being dramatic.</p>
+        <p><b>✨ Scenes 8–10 — Magic &amp; Transformation:</b> Chimes, celesta and rising strings. Build volume gradually as the magical box opens and the portal appears.</p>
+        <p><b>☕ Scenes 13–16 — Modern City &amp; Romance:</b> Warm piano, light acoustic guitar and soft strings. Cosy café feeling. Gentle and sweet without being dramatic.</p>
+        <p><b>⚡ Scenes 17–18 — Conflict:</b> Dramatic strings, low cello and subtle percussion. Slightly faster tempo. Tension without being scary or overwhelming.</p>
+        <p><b>🌸 Scenes 19–20 — Hopeful Ending:</b> Uplifting piano, full strings and a soft choir or pad layer. Fade out slowly over the moral value text card.</p>
+      </div>
+      <div class="sample-box">
+        <h3>Sample Voice-over Script (4 Key Scenes)</h3>
+        <p style="margin-bottom:6px;color:#1d2033;font-weight:900">Scene 1 — Opening</p>
+        <p>"Pada zaman dahulu, tinggal seorang gadis baik hati bernama Bawang Putih bersama ibu tiri dan saudara tirinya, Bawang Merah."</p>
+        <p style="margin-bottom:6px;color:#1d2033;font-weight:900">Scene 7 — Act of Kindness</p>
+        <p>"Dengan hati yang ikhlas, Bawang Putih membantu nenek itu tanpa mengharapkan sebarang balasan."</p>
+        <p style="margin-bottom:6px;color:#1d2033;font-weight:900">Scene 12 — New Life in the City</p>
+        <p>"Di kota yang sibuk dan moden, Bawang Putih memulakan kehidupan baharu dengan penuh keberanian dan harapan."</p>
+        <p style="margin-bottom:6px;color:#1d2033;font-weight:900">Scene 20 — Moral Ending</p>
+        <p>"Akhirnya, Bawang Putih menemui kebahagiaan yang abadi. Kebaikan hati sentiasa lebih indah daripada iri hati."</p>
+        <div style="margin-top:14px;padding:14px;background:#f4f5fb;border-radius:18px;color:#6b7087;font-size:14px">
+          <b>📌 Tip:</b> Write all 20 narration lines before recording anything. Read them aloud once to check they fit within 9 seconds. Adjust any lines that are too long before you start recording.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       SECTION ⑦ — SUBMISSION CHECKLIST
+  ══════════════════════════════════════════ -->
+  <section id="submit">
+    <div class="section-head">
+      <h2>⑦ Submission Checklist</h2>
+      <p>Final step — confirm every phase is complete before submitting. Tick each item below. Your progress is saved automatically in this browser.</p>
+    </div>
+    <div class="sub-grid">
+      <div class="check-card">
+        <h3>Production Checklist</h3>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 14px">Tick each item only when it is fully done — not when it is "almost" done.</p>
+        <label class="check"><input type="checkbox"> <b>Phase 01:</b> Title, topic, objective, audience and moral value decided</label>
+        <label class="check"><input type="checkbox"> <b>Phase 01:</b> Character profiles written (name, look, role)</label>
+        <label class="check"><input type="checkbox"> <b>Phase 01:</b> Master Prompt completed and pasted into Gemini / ChatGPT</label>
+        <label class="check"><input type="checkbox"> <b>Phase 01:</b> Full 20-scene production guide saved from AI output</label>
+        <label class="check"><input type="checkbox"> <b>Phase 02:</b> All 20 scene images generated in 16:9 format</label>
+        <label class="check"><input type="checkbox"> <b>Phase 02:</b> Character consistency checked across all 20 images</label>
+        <label class="check"><input type="checkbox"> <b>Phase 02:</b> All images saved in one folder, labelled by scene number</label>
+        <label class="check"><input type="checkbox"> <b>Phase 03:</b> All 20 images arranged in correct sequence in Google Vids</label>
+        <label class="check"><input type="checkbox"> <b>Phase 03:</b> Each clip set to 9 seconds duration</label>
+        <label class="check"><input type="checkbox"> <b>Phase 03:</b> Camera motion and transitions added</label>
+        <label class="check"><input type="checkbox"> <b>Phase 03:</b> Silent 3-minute draft reviewed and exported as MP4</label>
+        <label class="check"><input type="checkbox"> <b>Phase 04:</b> Voice-over script written for all 20 scenes</label>
+        <label class="check"><input type="checkbox"> <b>Phase 04:</b> Voice-over recorded or AI voice generated in CapCut</label>
+        <label class="check"><input type="checkbox"> <b>Phase 04:</b> Background music and sound effects added</label>
+        <label class="check"><input type="checkbox"> <b>Phase 04:</b> Audio levels balanced (voice louder than music)</label>
+        <label class="check"><input type="checkbox"> <b>Phase 04:</b> Subtitles added using CapCut Auto Caption</label>
+        <label class="check"><input type="checkbox"> Final title card and moral value screen added</label>
+        <label class="check"><input type="checkbox"> Final video exported as MP4 1080p and tested on a phone</label>
+        <label class="check"><input type="checkbox"> Video uploaded to Google Drive and shareable link obtained</label>
+      </div>
+      <div class="track-card">
+        <h3>Submission Tracker</h3>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 16px">Fill in your links and notes below. Click Save — your data will be stored in this browser.</p>
+        <input id="videoLink" type="text" placeholder="Paste final video link (Google Drive / YouTube)" />
+        <input id="docLink" type="text" placeholder="Paste Phase 01 storyboard / production guide link" />
+        <textarea id="notes" placeholder="Group name · Version number · Lecturer remarks · Resubmission notes..."></textarea>
+        <button class="save" onclick="saveData()">💾 Save Progress</button>
+        <div class="saved" id="saveMsg"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    Video AI Creation Board · 4 Phases · Free Tools: Google Vids · Canva · CapCut · Sample: Bawang Putih &amp; Bawang Merah · Designed for Lecturers &amp; Beginners
+  </div>
+</div>
+
+<!-- SCENE MODAL -->
+<div class="modal" id="sceneModal">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal()">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+  /* ── Phase tab switching ── */
+  const tabs   = document.querySelectorAll('.phase-tab');
+  const panels = document.querySelectorAll('.phase-panel');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* ── Tool comparison data — 3 FREE tools only ── */
+  const toolDetails = {
+    googlevids: {
+      title: 'Google Vids',
+      emoji: '🎬',
+      cost: 'Free — Google account only',
+      phase: 'Phase 03 (primary)',
+      badges: ['⭐ Start Here', 'Free', 'No Install', 'Google Workspace', 'Beginner Friendly'],
+      overview: 'Google Vids is the best starting tool for beginners. It lives inside Google — no download, no payment, no setup. You can upload your 20 scene images, arrange them in sequence, set clip durations and add text or basic narration. If you only learn one tool in Phase 03, make it Google Vids.',
+      advantages: [
+        'Completely free with any Google account — no credit card',
+        'No app to install — works directly in the browser',
+        'Familiar interface similar to Google Slides — easy to learn',
+        'Good for arranging scenes, setting clip timing and adding narration',
+        'Works well for classroom submission and sharing via Google Drive',
+        'Supports text overlays, basic transitions and voice narration'
+      ],
+      disadvantages: [
+        'Limited cinematic effects — no dramatic camera movement or AI animation',
+        'Best used for assembly and narration rather than AI video generation',
+        'Requires a stable internet connection — cannot be used offline',
+        'Video output quality may be lower than CapCut for final polish'
+      ],
+      tip: 'Use Google Vids to arrange all 20 scenes in order with correct 9-second timing. Export the silent draft, then move to CapCut for audio and effects.'
+    },
+    canva: {
+      title: 'Canva',
+      emoji: '🖼️',
+      cost: 'Free tier available (limited AI credits)',
+      phase: 'Phase 01 + 03 + 04',
+      badges: ['Free Tier', 'Design Friendly', 'Magic Media', 'Titles & Subtitles', 'Mobile + Desktop'],
+      overview: 'Canva is familiar to most educators in Malaysia and works across all 4 phases. In Phase 01, use it to design your storyboard layout. In Phase 03, use Magic Media to generate short AI video clips and add title cards. In Phase 04, use it to add subtitles and produce the final visual packaging for submission.',
+      advantages: [
+        'Familiar to most lecturers and students in Malaysia — no learning curve',
+        'Free tier includes Magic Media AI video generation (limited credits)',
+        'Excellent for title cards, scene labels, subtitles and thumbnails',
+        'Works on phone and desktop — accessible anywhere',
+        'Beautiful design templates make submissions look professional',
+        'Good for Phase 01 storyboard planning (use Canva whiteboard or slides)'
+      ],
+      disadvantages: [
+        'Free AI video credits are limited — may run out mid-project',
+        'Magic Media video clips are short and may not maintain character consistency',
+        'Not ideal for long-form video assembly — use Google Vids for that',
+        'Better used as a design and finishing layer rather than the main video tool'
+      ],
+      tip: 'Use Canva for: opening title card, phase transition labels, scene captions, moral value ending card and the submission thumbnail. Let Google Vids handle the main video assembly.'
+    },
+    capcut: {
+      title: 'CapCut',
+      emoji: '✂️',
+      cost: '100% Free — no credit card, no paywall',
+      phase: 'Phase 03 + 04 (audio specialist)',
+      badges: ['100% Free', 'AI Voice', 'Auto Captions', 'Music Library', 'Mobile + Desktop', 'Phase 04 ⭐'],
+      overview: 'CapCut is the most powerful free tool for Phase 04. It handles voice-over, AI-generated narration, auto-captions, background music, sound effects and video export in one place — all free. For Phase 03, it offers transitions, effects and trim tools that go beyond Google Vids.',
+      advantages: [
+        '100% free — no credits limit, no paywall, no credit card needed',
+        'AI Voice feature generates narration automatically from your script text',
+        'Auto Caption generates subtitles automatically — saves significant time',
+        'Large free music library with mood categories (calm, dramatic, romantic)',
+        'Good trim, cut and transition tools for Phase 03 video editing',
+        'Works on phone (Android/iOS) and desktop — very popular with students',
+        'Easy audio level adjustment — voice and music tracks are separate'
+      ],
+      disadvantages: [
+        'Requires creating a free account (TikTok or email sign-in)',
+        'Some AI features require internet — cannot be used offline',
+        'Interface has many features that may feel overwhelming at first',
+        'AI video generation quality is lower than specialist tools like Veo or Kling',
+        'Mobile version may be easier for beginners than the desktop app'
+      ],
+      tip: 'Use CapCut for everything in Phase 04: import your Google Vids draft, add AI voice narration, add music from the library, use Auto Caption for subtitles, then export as MP4 1080p for submission.'
+    }
+  };
+
+  function renderToolDetail(key = 'googlevids') {
+    const t = toolDetails[key];
+    const badgeHtml = t.badges.map(b => `<span class="tool-badge${b.includes('Free') || b.includes('free') ? ' free' : ''}">${b}</span>`).join('');
+    const advHtml   = t.advantages.map(x => `<li>${x}</li>`).join('');
+    const disHtml   = t.disadvantages.map(x => `<li>${x}</li>`).join('');
+    document.getElementById('toolDetail').innerHTML = `
+      <h3>${t.emoji} ${t.title}</h3>
+      <div class="tool-badges">${badgeHtml}</div>
+      <p style="color:#626883;line-height:1.7;font-weight:650;margin-bottom:6px"><b>Cost:</b> ${t.cost} &nbsp;|&nbsp; <b>Best for:</b> ${t.phase}</p>
+      <p style="color:#626883;line-height:1.7;font-weight:650">${t.overview}</p>
+      <div class="compare-grid">
+        <div class="compare-card adv"><h4>✅ Advantages</h4><ul>${advHtml}</ul></div>
+        <div class="compare-card dis"><h4>⚠ Disadvantages / Watch Out</h4><ul>${disHtml}</ul></div>
+        <div class="compare-card" style="grid-column:1/-1;background:#f4f5fb"><h4>📌 Best Practice Tip for This Tool</h4><p>${t.tip}</p></div>
+      </div>`;
+  }
+  renderToolDetail();
+  document.querySelectorAll('.tool-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tool-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderToolDetail(btn.dataset.tool);
+    });
+  });
+
+  /* ── Storyboard scenes ── */
+  const scenes = [
+    {no:1,  time:'0:00–0:09', title:'Pembukaan Kampung',    cat:'traditional', summary:'Traditional Malay village at sunrise.',           detail:'Bawang Putih introduced in the kampung. Establish all characters and setting in the very first scene.'},
+    {no:2,  time:'0:09–0:18', title:'Kerja Rumah',          cat:'traditional', summary:'Bawang Putih doing household chores.',             detail:'Montage of sweeping, carrying water and cleaning while Bawang Merah and Ibu Tiri relax. Show contrast clearly.'},
+    {no:3,  time:'0:18–0:27', title:'Dimarahi',             cat:'traditional', summary:'Ibu Tiri scolds Bawang Putih.',                    detail:'Close-up emotional confrontation inside the wooden house. Show Bawang Putih\'s patient, quiet expression.'},
+    {no:4,  time:'0:27–0:36', title:'Sedih Sendiri',        cat:'traditional', summary:'Bawang Putih sits alone at sunset.',               detail:'She sits alone on the house stairs holding folded clothes. Slow, melancholic. No dialogue — visual storytelling only.'},
+    {no:5,  time:'0:36–0:45', title:'Ke Sungai',            cat:'traditional', summary:'She walks to the river to wash clothes.',          detail:'Morning walk to the riverbank with a basket. Peaceful lighting. Establish the natural, quiet environment.'},
+    {no:6,  time:'0:45–0:54', title:'Nenek Tua',            cat:'traditional', summary:'She notices an elderly woman at the river.',       detail:'Bawang Putih spots an old woman who appears lost or tired. Show kindness and concern in her expression immediately.'},
+    {no:7,  time:'0:54–1:03', title:'Membantu',             cat:'traditional', summary:'She helps the old woman sincerely.',               detail:'Bawang Putih offers water and assistance without hesitation. This is the moral turning point of the story.'},
+    {no:8,  time:'1:03–1:12', title:'Kotak Misteri',        cat:'traditional', summary:'A magical glowing box is given to her.',           detail:'The elderly woman hands Bawang Putih a golden glowing box. Warm magical light. The music shifts here — chimes begin.'},
+    {no:9,  time:'1:12–1:21', title:'Pulang',               cat:'traditional', summary:'She walks home carrying the glowing box.',         detail:'Sunset walk home. Magical golden light faintly glowing from the basket. Hopeful music begins.'},
+    {no:10, time:'1:21–1:30', title:'Kotak Dibuka',         cat:'traditional', summary:'The box opens — golden light fills the room.',     detail:'Inside the wooden house, the box opens. Glowing particles fill the room. Transition into a portal begins.'},
+    {no:11, time:'1:30–1:39', title:'Transformasi',         cat:'modern',      summary:'A glowing portal leads to a modern city.',         detail:'Key transformation scene. The kampung world dissolves through a glowing portal into a modern city skyline.'},
+    {no:12, time:'1:39–1:48', title:'Tiba di Kota',         cat:'modern',      summary:'Bawang Putih arrives in the modern city.',         detail:'Wide establishing shot of a Korean-drama-style city. She looks around with a mixture of wonder and courage.'},
+    {no:13, time:'1:48–1:57', title:'Mencari Kerja',        cat:'modern',      summary:'She finds a café with a job opening.',             detail:'She stops outside a cosy café with a "Help Wanted" sign in the window. Warm interior lighting visible through the glass.'},
+    {no:14, time:'1:57–2:06', title:'Bekerja',              cat:'modern',      summary:'She learns to work as a barista.',                 detail:'A warm café montage — learning to make coffee, smiling at customers, growing in confidence.'},
+    {no:15, time:'2:06–2:15', title:'Bertemu Jejaka',       cat:'modern',      summary:'A romantic first meeting at the café counter.',    detail:'As she places a coffee cup on the counter, their hands almost touch. Slow-motion eye contact. Soft romantic atmosphere.'},
+    {no:16, time:'2:15–2:24', title:'Bibit Cinta',          cat:'modern',      summary:'A romantic city-walk montage.',                    detail:'Shared smiles, warm drinks, walking through city lights together. Sweet and gentle — not dramatic.'},
+    {no:17, time:'2:24–2:33', title:'Bawang Merah Muncul',  cat:'conflict',    summary:'Bawang Merah reappears, glamorously dressed.',     detail:'Dramatic entrance in a modern red outfit at night outside the café. Music shifts to tense strings.'},
+    {no:18, time:'2:33–2:42', title:'Konflik',              cat:'conflict',    summary:'Bawang Merah confronts Bawang Putih.',             detail:'Emotional outdoor confrontation. Dramatic close-ups of both characters. The tension peaks here.'},
+    {no:19, time:'2:42–2:51', title:'Keinsafan',            cat:'conflict',    summary:'Bawang Merah begins to regret her actions.',       detail:'Seeing Bawang Putih\'s consistent kindness, Bawang Merah shows regret on her face. Music softens.'},
+    {no:20, time:'2:51–3:00', title:'Penutup Bahagia',      cat:'conflict',    summary:'Happy ending with moral value displayed.',         detail:'Cherry blossom park ending. All characters at peace. Moral value text appears on screen as music fades out.'}
+  ];
+
+  const grid = document.getElementById('storyGrid');
+  function renderScenes(filter = 'all') {
+    grid.innerHTML = '';
+    scenes.filter(s => filter === 'all' ? true : s.cat === filter).forEach(scene => {
+      const div = document.createElement('div');
+      div.className = 'scene';
+      div.innerHTML = `<div class="badge">${scene.no}</div><div class="time">${scene.time}</div><h4>${scene.title}</h4><p>${scene.summary}</p>`;
+      div.addEventListener('click', () => openModal(scene));
+      grid.appendChild(div);
+    });
+  }
+  renderScenes();
+
+  document.querySelectorAll('.story-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.story-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderScenes(btn.dataset.range);
+    });
+  });
+
+  function openModal(scene) {
+    const catLabel = scene.cat === 'traditional' ? 'Traditional · Scenes 1–10' : scene.cat === 'modern' ? 'Modern City · Scenes 11–16' : 'Conflict &amp; Ending · Scenes 17–20';
+    document.getElementById('modalContent').innerHTML = `
+      <span class="pill">Scene ${scene.no} of 20 &nbsp;·&nbsp; ${scene.time}</span>
+      <h3>${scene.title}</h3>
+      <p><b>Story section:</b> ${catLabel}</p>
+      <p><b>Summary:</b> ${scene.summary}</p>
+      <p><b>Production detail:</b> ${scene.detail}</p>
+      <hr style="border:none;border-top:1px solid #eef0f7;margin:16px 0">
+      <p><b>📷 Phase 02 Tip:</b> Generate this image in 16:9 format. Check that the character's outfit and expression match the scene description above and are consistent with the previous scene.</p>
+      <p><b>🎬 Phase 03 Tip:</b> Choose a camera movement that matches the emotional tone — slow push-in for emotional moments, wide shot for establishing, close-up for reactions.</p>
+      <p><b>🎙 Phase 04 Tip:</b> Write the voice-over line for this scene using your Master Prompt output. Keep it under 9 seconds when read aloud. Then choose music that matches the mood described above.</p>
+    `;
+    document.getElementById('sceneModal').classList.add('active');
+  }
+  function closeModal() { document.getElementById('sceneModal').classList.remove('active'); }
+
+  /* ── Prompt copy ── */
+  function copyPrompt() {
+    const t = document.getElementById('masterPrompt');
+    t.select();
+    document.execCommand('copy');
+    alert('✅ Master Prompt copied!\n\nNow open gemini.google.com (free) or chatgpt.com and paste the prompt. The AI will generate a full 20-scene production guide with image prompts, video prompts, voice-over lines and music suggestions for every scene.');
+  }
+
+  /* ── Submission tracker ── */
+  function saveData() {
+    localStorage.setItem('videoLink', document.getElementById('videoLink').value);
+    localStorage.setItem('docLink',   document.getElementById('docLink').value);
+    localStorage.setItem('notes',     document.getElementById('notes').value);
+    document.getElementById('saveMsg').innerText = '✅ Saved in this browser.';
+  }
+  function loadData() {
+    document.getElementById('videoLink').value = localStorage.getItem('videoLink') || '';
+    document.getElementById('docLink').value   = localStorage.getItem('docLink')   || '';
+    document.getElementById('notes').value     = localStorage.getItem('notes')     || '';
+  }
+  document.querySelectorAll('.check input').forEach((cb, i) => {
+    cb.checked = localStorage.getItem('check_' + i) === '1';
+    cb.addEventListener('change', () => localStorage.setItem('check_' + i, cb.checked ? '1' : '0'));
+  });
+  loadData();
+</script>
+</body>
+</html>
